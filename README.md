@@ -1,5 +1,5 @@
-cloud-init-arch
-===============
+cloud-init-extra
+================
 
 Some extra configs for cloud providers for using cloud-init on Arch.
 
