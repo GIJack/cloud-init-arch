@@ -47,7 +47,7 @@ install_packages() {
 }
 
 install_syslinux() {
-  submsg "Configurint Syslinux Bootloader"
+  submsg "Configuring Syslinux Bootloader"
   sed -i s/sda3/${root_part}/g /boot/syslinux/syslinux.cfg
   syslinux-install_update -i -a -m
   return $?
