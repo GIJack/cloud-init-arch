@@ -61,9 +61,9 @@ main() {
   local -i exit_code=0
   [ $1 == "help" || $1 == "--help" ] && help_and_exit
   message "Initalizing..."
-  install_syslinux ; exit_code+=$?
-  enable_services ; exit_code+=$?
-  config_initcpio ; exit_code+=$?
+  install_syslinux || exit_code+=1
+  enable_services  || exit_code+=1
+  config_initcpio  || exit_code+=1
   message "Done!"
   [ $exit_code -ne 0 ] && exit_with_error 1 "There where errrors, check output"
   rm ${0} #script deletes itself when done
