@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# packages that need to be installed
+arch_packages="linux nano vi cloud-init cloud-utils syslinux openssh"
 # systemd services that need to be enabled
 system_services="systemd-networkd sshd cloud-init-local cloud-init cloud-config cloud-final"
 # kernel modules that get added to /etc/mkinitcpio
@@ -38,6 +40,12 @@ warn(){
   echo 1>&2 "init.sh: WARN: ${@}"
 }
 
+install_packages() {
+  submsg "Installing/Updated Base packages"
+  pacman -Syu ${arch_packages}
+  return $?
+}
+
 install_syslinux() {
   submsg "Configurint Syslinux Bootloader"
   sed -i s/sda3/${root_part}/g /boot/syslinux/syslinux.cfg
@@ -61,11 +69,12 @@ main() {
   local -i exit_code=0
   [ $1 == "help" || $1 == "--help" ] && help_and_exit
   message "Initalizing..."
+  install_packages || exit_code+=1
   install_syslinux || exit_code+=1
   enable_services  || exit_code+=1
   config_initcpio  || exit_code+=1
   message "Done!"
-  [ $exit_code -ne 0 ] && exit_with_error 1 "There where errrors, check output"
+  [ $exit_code -ne 0 ] && exit_with_error 1 "There where errrors, check above output"
   rm ${0} #script deletes itself when done
 }
 
