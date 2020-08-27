@@ -75,7 +75,6 @@ main() {
   config_initcpio  || exit_code+=1
   message "Done!"
   [ $exit_code -ne 0 ] && exit_with_error 1 "There where errrors, check above output"
-  rm ${0} #script deletes itself when done
 }
 
 main "${@}"
