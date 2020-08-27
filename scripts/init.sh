@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
+## CONFIG ##
+# Kernel package
+kernel="linux"
 # packages that need to be installed
-arch_packages="linux nano vi cloud-init cloud-utils syslinux openssh"
+arch_packages="nano vi cloud-init cloud-utils syslinux openssh ${kernel}"
 # systemd services that need to be enabled
 system_services="systemd-networkd sshd cloud-init-local cloud-init cloud-config cloud-final"
 # kernel modules that get added to /etc/mkinitcpio
 initcpio_modules="virtio virtio_pci virtio_blk virtio_net virtio_ring"
 # block device parition with root fs, minus the /dev/ part
 root_part="vda1"
+## /CONFIG ##
 
 help_and_exit() {
   cat 1>&2 << EOF
@@ -28,7 +32,7 @@ message(){
 }
 
 submsg(){
-  echo "[+]	${@}"
+  echo "==> ${@}"
 }
 
 exit_with_error(){
@@ -60,9 +64,11 @@ enable_services() {
 }
 
 config_initcpio() {
+  local -i exit_n=0
   submsg "Updating mkinicpio.conf"
-  sed -i s/"MODULES=()"/"MODULES=(${initcpio_modules})"/g /etc/mkinitcpio.conf
-  return $?
+  sed -i s/"MODULES=()"/"MODULES=(${initcpio_modules})"/g /etc/mkinitcpio.conf || exit_n +=1
+  mkinitcpio -p ${kernel} || exit_n +=1
+  return ${exit_n}
 }
 
 main() {
