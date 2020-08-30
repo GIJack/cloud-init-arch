@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 ## CONFIG ##
-# Kernel package
-kernel="linux"
+# User config placed in chroot
+local_config="/etc/cloud/init.local"
 # packages that need to be installed
-arch_packages="nano vi cloud-init cloud-utils syslinux openssh ${kernel}"
+arch_packages="nano vi cloud-init cloud-utils syslinux openssh ${KERNEL}"
 # systemd services that need to be enabled
 system_services="systemd-networkd sshd cloud-init-local cloud-init cloud-config cloud-final"
 # kernel modules that get added to /etc/mkinitcpio
@@ -20,8 +20,9 @@ Initialize a new Arch Linux install for the cloud. This runs in the chroot,
 Once, as root.
 
 This installs the boot loader, configures disk modules for initcpio, and enables
-systemd services. There are no options or parameters, this script will delete
-itself once done.
+systemd services. There are no options or parameters.
+
+reads additional config from ${local_config}
 
 EOF
   exit 4
@@ -44,9 +45,54 @@ warn(){
   echo 1>&2 "init.sh: WARN: ${@}"
 }
 
+parse_environment(){
+  # parse a key=pair shell enviroment file. NOTE all keys will be made UPPERCASE
+  # variables. in parent script.
+
+  local infile="${@}"
+  local safe_config=$(mktemp)
+  local key=""
+  local value=""
+  
+  [ -f ${infile} ] || return 2 # infile is not a file
+  # Now we have an array of file lines
+  readarray file_lines < "${infile}" || return 1 # error proccessing
+
+  for line in ${file_lines[@]};do
+    # Remove comments
+    [ ${line} == "#" ]; continue
+    line=$(cut -d "#" -f 1 <<< ${line} )
+
+    # Split key and value from lines
+    key=$(cut -d "=" -f 1 <<< ${line} )
+    value=$(cut -d "=" -f 2 <<< ${line} )
+
+    # Parse key. Make the Key uppercase, remove spaces and all non-alphanumeric
+    # characters
+    key=$(key^^)
+    key=${key// /}
+    key=$(tr -cd "[:alnum:]" <<< $key)
+
+    # Parse value. Remove anything that can escape a variable and run code.
+    value=$(tr -d ";|&()" <<< $value )
+
+    # Zero check. If after cleaning either the key or value is null, then
+    # write nothing
+    [ -z $key ] && continue
+    [ -z $value ] && continue
+
+    # write sanitized values to temp file
+    echo "${key}=${value}" >> ${safe_config}
+  done
+
+  #Now, we can import the cleaned config and then delete it.
+  source ${safe_config}
+  rm $(safe_config)
+}
+
 install_packages() {
   submsg "Installing/Updated Base packages"
-  pacman -Syu ${arch_packages}
+  pacman -Syu ${arch_packages} ${ADDITIONAL_PACKAGES}
   return $?
 }
 
@@ -59,15 +105,15 @@ install_syslinux() {
 
 enable_services() {
   submsg "Enabling Systemd Units"
-  systemctl enable ${system_services}
+  systemctl enable ${system_services} ${SYSTEM_SERVICES}
   return $?
 }
 
 config_initcpio() {
   local -i exit_n=0
   submsg "Updating mkinicpio.conf"
-  sed -i s/"MODULES=()"/"MODULES=(${initcpio_modules})"/g /etc/mkinitcpio.conf || exit_n +=1
-  mkinitcpio -p ${kernel} || exit_n +=1
+  sed -i s/"MODULES=()"/"MODULES=(${initcpio_modules})"/g /etc/mkinitcpio.conf || exit_n+=1
+  mkinitcpio -p ${KERNEL} || exit_n+=1
   return ${exit_n}
 }
 
@@ -75,6 +121,7 @@ main() {
   local -i exit_code=0
   [ $1 == "help" || $1 == "--help" ] && help_and_exit
   message "Initalizing..."
+  [ -f "${local_config}" ] && parse_environment "${local_config}" || warn "couldn't read ${local_config}"
   install_packages || exit_code+=1
   install_syslinux || exit_code+=1
   enable_services  || exit_code+=1

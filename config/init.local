@@ -1,0 +1,12 @@
+# Config for runonce
+
+# Name of kernel package
+KERNEL=linux
+
+# NOTE: this is on top of base config.
+
+# List of additional services to enable.
+SYSTEM_SERVICES=""
+
+# List of additional packages to install, beyond base
+ADDITIONAL_PACKAGES=""
