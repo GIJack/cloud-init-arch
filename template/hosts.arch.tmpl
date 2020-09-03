@@ -13,9 +13,9 @@ you need to add the following to config:
 #     /etc/cloud/cloud.cfg or cloud-config from user-data
 # 
 # The following lines are desirable for IPv4 capable hosts
-127.0.0.1 localhost {{hostname}}
+127.0.0.1 localhost {{hostname}} {{fqdn}}
 
 # The following lines are desirable for IPv6 capable hosts
-::1 localhost {{hostname}}
+::1 localhost {{hostname}} {{fqdn}}
 
 
