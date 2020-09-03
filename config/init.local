@@ -9,4 +9,7 @@ KERNEL=linux
 SYSTEM_SERVICES=""
 
 # List of additional packages to install, beyond base
-ADDITIONAL_PACKAGES=""
+ADDITIONAL_PACKAGES="nano"
+
+# Text editors are not provided by default. It would be wise to pick one
+#ADDITIONAL_PACKAGES="nano vi emacs-nox"

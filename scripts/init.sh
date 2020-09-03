@@ -4,7 +4,7 @@
 # User config placed in chroot
 local_config="/etc/cloud/init.local"
 # packages that need to be installed
-arch_packages="nano vi cloud-init cloud-utils syslinux openssh ${KERNEL}"
+arch_packages="cloud-init cloud-utils syslinux openssh ${KERNEL}"
 # systemd services that need to be enabled
 system_services="systemd-networkd sshd cloud-init-local cloud-init cloud-config cloud-final"
 # kernel modules that get added to /etc/mkinitcpio
