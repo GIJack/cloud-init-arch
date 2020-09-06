@@ -16,8 +16,8 @@ root_part="vda1"
 help_and_exit() {
   cat 1>&2 << EOF
 init.sh
-Initialize a new Arch Linux install for the cloud. This runs in the chroot,
-Once, as root.
+Initialize a new Arch Linux install for use as a cloud image template that gets
+used with cloud-init. This runs once, on the image, before its uploaded.
 
 This installs the boot loader, configures disk modules for initcpio, and enables
 systemd services. There are no options or parameters.
