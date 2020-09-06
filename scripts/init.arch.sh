@@ -4,7 +4,7 @@
 # User config placed in chroot
 local_config="/etc/cloud/init.local"
 # packages that need to be installed
-arch_packages="cloud-init cloud-utils syslinux openssh mkinitcpio ${KERNEL}"
+arch_packages="cloud-init cloud-utils syslinux openssh mkinitcpio"
 # systemd services that need to be enabled
 system_services="systemd-networkd sshd cloud-init-local cloud-init cloud-config cloud-final"
 # kernel modules that get added to /etc/mkinitcpio
@@ -92,7 +92,7 @@ parse_environment(){
 
 install_packages() {
   submsg "Installing/Updated Base packages"
-  pacman --noconfirm -Syu ${arch_packages} ${ADDITIONAL_PACKAGES}
+  pacman --noconfirm -Syu ${arch_packages} ${KERNEL} ${EXTRA_PACKAGES}
   return $?
 }
 
