@@ -2,7 +2,7 @@
 
 ## CONFIG ##
 # User config placed in chroot
-local_config="/etc/cloud/init.local"
+local_config="/etc/cloud/init.arch.local"
 # packages that need to be installed
 system_packages="cloud-init cloud-utils syslinux openssh mkinitcpio"
 # systemd services that need to be enabled
@@ -15,14 +15,26 @@ root_part="vda1"
 
 help_and_exit() {
   cat 1>&2 << EOF
-init.sh
-Initialize a new Arch Linux install for use as a cloud image template that gets
-used with cloud-init. This runs once, on the image, before its uploaded.
+init.sh - Arch Linux
 
-This installs the boot loader, configures disk modules for initcpio, and enables
-systemd services. There are no options or parameters.
+This is a runonce script to intialize a manual install into a virtual machine
+template for cloud compute that performs additional configuration with
+cloud-init.
 
-reads additional config from ${local_config}
+User configuration is read from from ${local_config}.
+
+In order this script:
+
+1. installs/updates needed system packages -  Kernel, text editor and additional
+packages are selected from user config. syslinux, openssh, mkinicpio,
+cloud-init, cloud-utils, and openssh are hardcoded.
+
+2. installs the syslinux bootloader
+
+3. enables system services -  reads additional services from the user config.
+networkd, sshd, and all the cloud-init services are hardcoded
+
+4. reconfigures mkinitcpio and re-generates the image.
 
 EOF
   exit 4
@@ -124,7 +136,11 @@ main() {
   local -i exit_code=0
   [ $1 == "help" || $1 == "--help" ] && help_and_exit
   message "Initalizing..."
-  [ -f "${local_config}" ] && parse_environment "${local_config}" || warn "couldn't read ${local_config}"
+  if [ -f "${local_config}" ];then
+    parse_environment "${local_config}"
+   else
+    exit_with_error 2 "Could not read ${local_config} file. stopping"
+  fi
   install_packages || exit_code+=1
   install_syslinux || exit_code+=1
   enable_services  || exit_code+=1

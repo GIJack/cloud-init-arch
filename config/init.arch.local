@@ -1,9 +1,10 @@
-# Config for runonce
+# Config for runonce.
+
+# NOTE: base config is already in init.arch.sh. See file for what is already
+# enabled before enabling additional software here.
 
 # Name of kernel package
 KERNEL=linux
-
-# NOTE: this is on top of base config.
 
 # List of additional services to enable.
 SYSTEM_SERVICES=""
