@@ -104,7 +104,7 @@ parse_environment(){
 
 install_packages() {
   submsg "Installing/Updated Base packages"
-  pacman --noconfirm -Syu ${system_packages} ${KERNEL} ${EXTRA_PACKAGES}
+  pacman --noconfirm -Su ${system_packages} ${KERNEL} ${EXTRA_PACKAGES}
   return $?
 }
 
@@ -143,7 +143,7 @@ main() {
    else
     exit_with_error 2 "Could not read ${local_config} file. stopping"
   fi
-  install_packages || exit_code+=1
+  install_packages || exit_with_error 1 "Could not install necessary packages needed for script to run. Please check install"
   install_syslinux || exit_code+=1
   enable_services  || exit_code+=1
   config_initcpio  || exit_code+=1
