@@ -148,7 +148,7 @@ main() {
   enable_services  || exit_code+=1
   config_initcpio  || exit_code+=1
   message "Done!"
-  [ $exit_code -ne 0 ] && exit_with_error 1 "There where errrors, check above output"
+  [ $exit_code -ne 0 ] && exit_with_error 1 "${exit_code} errrors, check above output"
 }
 
 main "${@}"
