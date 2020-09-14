@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-## CONFIG ##
-# User config placed in chroot
+## DEFAULTS ##
+# User config placed in chroot. This is NEEDED
+KERNEL=linux
 local_config="/etc/cloud/init.arch.local"
 # packages that need to be installed
 system_packages="cloud-init cloud-utils syslinux openssh mkinitcpio"
@@ -11,7 +12,7 @@ system_services="systemd-networkd sshd cloud-init-local cloud-init cloud-config 
 initcpio_modules="virtio virtio_pci virtio_blk virtio_net virtio_ring"
 # block device parition with root fs, minus the /dev/ part
 root_part="vda1"
-## /CONFIG ##
+## /DEFAULTS ##
 
 help_and_exit() {
   cat 1>&2 << EOF
@@ -141,7 +142,7 @@ main() {
   if [ -f "${local_config}" ];then
     parse_environment "${local_config}"
    else
-    exit_with_error 2 "Could not read ${local_config} file. stopping"
+    warn "${local_config} not found!"
   fi
   install_packages || exit_with_error 1 "Could not install necessary packages needed for script to run. Please check install"
   install_syslinux || exit_code+=1
