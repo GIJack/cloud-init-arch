@@ -142,7 +142,7 @@ main() {
   if [ -f "${local_config}" ];then
     parse_environment "${local_config}"
    else
-    warn "${local_config} not found!"
+    warn "${local_config} not found!, default is in /usr/share/cloud-init-extra/${local_config}.default"
   fi
   install_packages || exit_with_error 1 "Could not install necessary packages needed for script to run. Please check install"
   install_syslinux || exit_code+=1
