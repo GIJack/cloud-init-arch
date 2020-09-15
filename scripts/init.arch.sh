@@ -137,7 +137,7 @@ config_initcpio() {
 
 main() {
   local -i exit_code=0
-  [ $1 == "help" || $1 == "--help" ] && help_and_exit
+  [[ $1 == "help" || $1 == "--help" ]] && help_and_exit
   message "Initalizing..."
   if [ -f "${local_config}" ];then
     parse_environment "${local_config}"
