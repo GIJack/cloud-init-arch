@@ -2,7 +2,7 @@
 
 ## DEFAULTS ##
 # User config placed in chroot. This is NEEDED
-KERNEL=linux
+KERNEL="linux"
 local_config="/etc/cloud/init.arch.local"
 # packages that need to be installed
 system_packages="cloud-init cloud-utils syslinux openssh mkinitcpio"
