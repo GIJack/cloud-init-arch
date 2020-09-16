@@ -3,8 +3,8 @@
 # NOTE: base config is already in init.arch.sh. See file for what is already
 # enabled before enabling additional software here.
 
-# Name of kernel package
-KERNEL=linux
+# Name of kernel package. Default is "linux"
+KERNEL="linux"
 
 # List of additional services to enable.
 SYSTEM_SERVICES=""
