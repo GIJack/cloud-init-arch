@@ -107,7 +107,7 @@ parse_environment(){
 
 install_packages() {
   submsg "Installing/Updated Base packages"
-  pacman --noconfirm -Su ${system_packages} ${KERNEL} ${EXTRA_PACKAGES}
+  pacman --noconfirm -Su ${system_packages} ${KERNEL} ${EXTRAPACKAGES}
   return $?
 }
 
@@ -122,7 +122,7 @@ install_syslinux() {
 
 enable_services() {
   submsg "Enabling Systemd Units"
-  systemctl enable ${system_services} ${SYSTEM_SERVICES}
+  systemctl enable ${system_services} ${SYSTEMSERVICES}
   return $?
 }
 
@@ -131,7 +131,7 @@ config_initcpio() {
   submsg "Updating mkinicpio.conf"
   # add extra modules from local file
   initcpio_modules+=" "
-  initcpio_modules+=${EXTRA_INT_MODULES}
+  initcpio_modules+=${EXTRAINTMODULES}
   sed -i s/"MODULES=()"/"MODULES=(${initcpio_modules})"/g /etc/mkinitcpio.conf || exit_n+=1
   mkinitcpio -p ${KERNEL} || exit_n+=1
   return ${exit_n}

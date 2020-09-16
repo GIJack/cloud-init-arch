@@ -7,12 +7,12 @@
 KERNEL="linux"
 
 # List of additional services to enable.
-SYSTEM_SERVICES=""
+SYSTEMSERVICES=""
 
 # List of additional packages to install, beyond base. Text editors are not
 # provided by default. It would be wise to pick one
-EXTRA_PACKAGES="nano"
+EXTRAPACKAGES="nano"
 #EXTRA_PACKAGES="nano vi emacs-nox"
 
 # List of extra kernel modules to be included in the initcpio image
-EXTRA_INT_MODULES=""
+EXTRAINTMODULES=""
