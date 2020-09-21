@@ -66,8 +66,8 @@ parse_environment(){
   local safe_config=$(mktemp)
   local key=""
   local value=""
-  # local -A file_lines
-  # local line=""
+  local -a file_lines
+  local line=""
   
   [ -f "${infile}" ] || return 2 # infile is not a file
   # Now we have an array of file lines
