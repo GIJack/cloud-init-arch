@@ -1,18 +1,28 @@
 #!/usr/bin/env bash
 
 ## DEFAULTS ##
-# User config placed in chroot. This is NEEDED
+# default user config. This is can be overridden in /etc/cloud/init.arch.local
+
+# Name of kernel package
 KERNEL="linux"
+
+# Name of bootloader. As of now, only syslinux is supported
+BOOTLOADER="syslinux"
+
+## /DEFAULTS ##
+
+## BASE INSTALL ##
+# Hardcoded always install packages
 local_config="/etc/cloud/init.arch.local"
 # packages that need to be installed
-system_packages="cloud-init cloud-utils syslinux openssh mkinitcpio"
+system_packages="base cloud-init cloud-utils openssh mkinitcpio"
 # systemd services that need to be enabled
 system_services="systemd-networkd sshd cloud-init-local cloud-init cloud-config cloud-final"
 # kernel modules that get added to /etc/mkinitcpio
 initcpio_modules="virtio virtio_pci virtio_blk virtio_net virtio_ring"
 # block device parition with root fs, minus the /dev/ part
 root_part="vda1"
-## /DEFAULTS ##
+## /BASE INSTALL ##
 
 help_and_exit() {
   cat 1>&2 << EOF
@@ -107,7 +117,7 @@ parse_environment(){
 
 install_packages() {
   submsg "Installing/Updated Base packages"
-  pacman --noconfirm -Su ${system_packages} ${KERNEL} ${EXTRAPACKAGES}
+  pacman --noconfirm -Su ${system_packages} ${BOOTLOADER} ${KERNEL} ${EXTRAPACKAGES}
   return $?
 }
 
@@ -147,7 +157,15 @@ main() {
     warn "${local_config} not found!, default is in /usr/share/cloud-init-extra/init.arch.local.default"
   fi
   install_packages || exit_with_error 1 "Could not install necessary packages needed for script to run. Please check install"
-  install_syslinux || exit_code+=1
+  case ${BOOTLOADER} in
+   syslinux)
+    install_syslinux || exit_code+=1
+    ;;
+   *)
+    warn "Bootloader ${BOOTLOADER} is unsupported, NO INSTALLED BOOTLOADER CONFIGURED!"
+    exit_code+=1
+    ;;
+  esac
   enable_services  || exit_code+=1
   config_initcpio  || exit_code+=1
   message "Done!"

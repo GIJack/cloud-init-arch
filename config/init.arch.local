@@ -6,6 +6,9 @@
 # Name of kernel package. Default is "linux"
 KERNEL="linux"
 
+# As of now, only syslinux is supported. Added for future compatibility
+BOOTLOADER="syslinux"
+
 # List of additional services to enable.
 SYSTEMSERVICES=""
 
